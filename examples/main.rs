@@ -31,7 +31,7 @@ fn main() {
         &blue_texture,
         Vec3::new(0.0, 1.74, 1.0),
         Vec3::new(0.5, 0.5, 0.5),
-        10.0,
+        5.0,
     );
 
     scene.add_node(&light0);
@@ -40,7 +40,7 @@ fn main() {
         &red_texture,
         Vec3::new(-1.74, 0.0, 1.0),
         Vec3::new(0.5, 0.5, 0.5),
-        10.0,
+        5.0,
     );
 
     scene.add_node(&light1);
@@ -49,7 +49,7 @@ fn main() {
         &green_texture,
         Vec3::new(1.74, 0.0, 1.0),
         Vec3::new(0.5, 0.5, 0.5),
-        10.0,
+        5.0,
     );
 
     scene.add_node(&light2);
@@ -58,7 +58,7 @@ fn main() {
         &yellow_texture,
         Vec3::new(0.0, -1.0, 1.0),
         Vec3::new(0.25, 0.25, 0.25),
-        10.0,
+        5.0,
     );
 
     scene.add_node(&light3);

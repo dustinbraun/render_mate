@@ -31,7 +31,7 @@ impl<'a> Scene<'a> {
     }
 
     pub fn render(&self, camera: &Camera, framebuffer: &mut Framebuffer) {
-        let sample_count = 200;
+        let sample_count = 1000;
         for y in 0..framebuffer.get_extent().height {
             for x in 0..framebuffer.get_extent().width {
                 let ray = camera.get_ray(x, y);
@@ -46,6 +46,8 @@ impl<'a> Scene<'a> {
         }
     }
 
+    // See https://en.wikipedia.org/wiki/Path_tracing
+    // for implementation details.
     fn cast_ray(&self, ray: &Ray, depth: u32) -> Color {
         if depth == 0 {
             Color::new(
@@ -66,10 +68,15 @@ impl<'a> Scene<'a> {
                     let next_ray = Ray {
                         origin: ray_origin,
                         direction: ray_direction,
-                        t_min: 0.001,
+                        t_min: 0.00001,
                         t_max: 10000.0,
                     };
-                    intersection.color*self.cast_ray(&next_ray, depth - 1)
+
+                    let p = 1.0/(3.14*2.0);
+                    let cos_theta = next_ray.direction.dot(intersection.normal);
+                    let brdf = intersection.color/3.14;
+                    let incoming = self.cast_ray(&next_ray, depth - 1);
+                    brdf * incoming * cos_theta / p
                 }
             }
             else {
@@ -82,29 +89,6 @@ impl<'a> Scene<'a> {
             }
         }
     }
-
-    /*fn cast_ray2(&self, ray: &Ray, depth: u32) -> Color {
-        let mut color = Color::new(0.0, 0.0, 0.0, 1.0);
-        if let Some(intersection) = self.intersects_ray(ray) {
-
-            
-
-            for point_light in self.point_lights.iter() {
-                let shadow_ray_direction = (point_light.position - intersection.position).normalize();
-                let shadow_ray_origin = intersection.position;
-                let shadow_ray = Ray {
-                    origin: shadow_ray_origin,
-                    direction: shadow_ray_direction,
-                    t_min: 0.001,
-                    t_max: (point_light.position - intersection.position).len(),
-                };
-                if self.intersects_ray(&shadow_ray).is_none() {
-                    color = color + intersection.color*point_light.color*intersection.normal.dot(shadow_ray_direction);
-                }
-            }
-        }
-        color
-    }*/
 
     fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
         let mut best: Option<Intersection> = None;

@@ -134,7 +134,7 @@ impl<'a> Mesh<'a> {
 
     }
 
-    fn face_intersects_ray(&self, face: &Face, ray: &Ray) -> Option<Intersection> {
+    /*fn face_intersects_ray(&self, face: &Face, ray: &Ray) -> Option<Intersection> {
         let p0 = self.vertices[face.vertex_ids[0] as usize];
         let p1 = self.vertices[face.vertex_ids[1] as usize];
         let p2 = self.vertices[face.vertex_ids[2] as usize];
@@ -200,6 +200,62 @@ impl<'a> Mesh<'a> {
             t: t,
             emission: self.emission,
         })
+    }*/
+
+
+    // See https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+    // for implementation details.
+    pub fn ray_intersects_face(&self, ray: &Ray, face: &Face) -> Option<Intersection> {
+        let v0 = self.vertices[face.vertex_ids[0] as usize];
+        let v1 = self.vertices[face.vertex_ids[1] as usize];
+        let v2 = self.vertices[face.vertex_ids[2] as usize];
+        let edge1 = v1.position - v0.position;
+        let edge2 = v2.position - v0.position;
+        let h = ray.direction.cross(edge2);
+        let a = edge1.dot(h);
+        if a.abs() < 0.00001 {
+            return None;
+        }
+        let f = 1.0/a;
+        let s = ray.origin - v0.position;
+        let u = f * s.dot(h);
+        if u < 0.0 || u > 1.0 {
+            return None;
+        }
+        let q = s.cross(edge1);
+        let v = f * ray.direction.dot(q);
+        if v < 0.0 || (u + v) > 1.0 {
+            return None;
+        }
+        let t = f * edge2.dot(q);
+        //if t < 0.00001 {
+        //    return None;
+        //}
+        if t > ray.t_max || t < ray.t_min {
+            return None;
+        }
+        
+        //let mut normal = edge1.cross(edge2).normalize();
+        //if normal.dot(ray.direction) > 0.0 {
+        //    normal *= -1.0;
+        //}
+        
+        let w = 1.0 - u - v;
+
+        let texture_coords = v0.texture_coords*w + v1.texture_coords*u + v2.texture_coords*v;
+
+        let mut normal = v0.normal*w + v1.normal*u + v2.normal*v;
+        if normal.dot(ray.direction) > 0.0 {
+            normal *= -1.0;
+        }
+
+        Some(Intersection {
+            position: ray.origin + ray.direction*t,
+            normal,
+            color: self.texture.sample(texture_coords),
+            t,
+            emission: self.emission,
+        })
     }
 }
 
@@ -210,7 +266,7 @@ impl<'a> Node for Mesh<'a> {
         }
         let mut best: Option<Intersection> = None;
         for face in self.faces.iter() {
-            if let Some(intersection) = self.face_intersects_ray(face, ray) {
+            if let Some(intersection) = self.ray_intersects_face(ray, face) {
                 if let Some(best_intersection) = best {
                     if intersection.t < best_intersection.t {
                         best = Some(intersection);
