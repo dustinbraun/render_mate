@@ -24,14 +24,13 @@ impl Sphere {
 
 impl Node for Sphere {
     fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
-        let a = ray.direction.sq_len();
-        let b = ray.origin - self.position;
-        let c = 2.0*ray.direction.dot(b);
-        let d = b.sq_len() - self.radius*self.radius;
-        if c*c - 4.0*a*d < 0.0 {
+        let a = ray.origin - self.position;
+        let b = 2.0*ray.direction.dot(a);
+        let c = a.sq_len() - self.radius*self.radius;
+        if b*b - 4.0*c < 0.0 {
             return None
         }
-        let t = (-c - (c*c - 4.0*a*d).sqrt())/(2.0*a);
+        let t = (-b - (b*b - 4.0*c).sqrt())/2.0;
         if t < ray.t_min || t > ray.t_max {
             return None
         }

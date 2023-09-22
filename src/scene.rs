@@ -31,12 +31,12 @@ impl<'a> Scene<'a> {
     }
 
     pub fn render(&self, camera: &Camera, framebuffer: &mut Framebuffer) {
-        let sample_count = 200;
+        let sample_count = 500;
         for y in 0..framebuffer.get_extent().height {
             for x in 0..framebuffer.get_extent().width {
-                let ray = camera.get_ray(x, y);
                 let mut average_color = Color::new(0.0, 0.0, 0.0, 1.0);
                 for _ in 0..sample_count {
+                    let ray = camera.get_ray(x, y);
                     average_color = average_color + self.cast_ray(&ray, 5);
                 }
                 average_color = average_color*(1.0/sample_count as f32);

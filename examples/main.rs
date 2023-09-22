@@ -2,8 +2,8 @@ use render_mate::Camera;
 use render_mate::Color;
 use render_mate::Extent;
 use render_mate::Framebuffer;
+use render_mate::Mat4;
 use render_mate::Mesh;
-use render_mate::PointLight;
 use render_mate::Scene;
 use render_mate::Sphere;
 use render_mate::Texture;
@@ -21,93 +21,53 @@ fn main() {
 
     let sky_box = Mesh::new_cube(
         &white_texture,
-        Vec3::new(0.0, 0.0, 0.0),
-        Vec3::new(3.0, 3.0, 3.0),
+        Mat4::new_translation(Vec3::new(0.0, 0.0, 0.0))*Mat4::new_scale(Vec3::new(3.0, 3.0, 3.0)),
         0.0
     );
-
     scene.add_node(&sky_box);
 
     let light0 = Mesh::new_cube(
         &blue_texture,
-        Vec3::new(0.0, 1.74, 1.0),
-        Vec3::new(0.5, 0.5, 0.5),
-        5.0,
+        Mat4::new_translation(Vec3::new(0.0, 1.74, 1.0))*Mat4::new_scale(Vec3::new(0.5, 0.5, 0.5)),
+        5.0
     );
-
     scene.add_node(&light0);
 
     let light1 = Mesh::new_cube(
         &red_texture,
-        Vec3::new(-1.74, 0.0, 1.0),
-        Vec3::new(0.5, 0.5, 0.5),
-        5.0,
+        Mat4::new_translation(Vec3::new(-1.74, 0.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 0.5, 0.5)),
+        5.0
     );
-
     scene.add_node(&light1);
 
     let light2 = Mesh::new_cube(
         &green_texture,
-        Vec3::new(1.74, 0.0, 1.0),
-        Vec3::new(0.5, 0.5, 0.5),
-        5.0,
+        Mat4::new_translation(Vec3::new(1.74, 0.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 0.5, 0.5)),
+        5.0
     );
-
     scene.add_node(&light2);
 
-    //let light3 = Mesh::new_cube(
-    //    &yellow_texture,
-    //    Vec3::new(0.0, -1.0, 1.0),
-    //    Vec3::new(0.25, 0.25, 0.25),
-    //    5.0,
-    //);
-
-    //scene.add_node(&light3);
-
-
-    let light4 = Sphere::new(
+    let light3 = Sphere::new(
         Vec3::new(0.0, -1.0, 1.0),
         0.25,
         Color::new(1.0, 1.0, 1.0, 1.0),
         3.0,
     );
-
-    scene.add_node(&light4);
-
+    scene.add_node(&light3);
 
     let box0 = Mesh::new_cube(
         &null_texture,
-        Vec3::new(-0.75, -1.0, 1.0),
-        Vec3::new(0.5, 1.0, 0.5),
+        Mat4::new_translation(Vec3::new(-0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(3.14/8.0),
         0.0
     );
     scene.add_node(&box0);
 
-    //let box1 = Mesh::new_cube(
-    //    &null_texture,
-    //    Vec3::new(0.75, 0.0, 1.0),
-    //    Vec3::new(0.5, 3.0, 1.0),
-    //    0.0
-    //);
-    //scene.add_node(&box1);
-
     let box1 = Mesh::new_cube(
         &null_texture,
-        Vec3::new(0.75, -1.0, 1.0),
-        Vec3::new(0.5, 1.0, 0.5),
+        Mat4::new_translation(Vec3::new(0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(-3.14/8.0),
         0.0
     );
     scene.add_node(&box1);
-    
-
-    scene.add_point_light(
-        PointLight::new(
-            Vec3::new(0.0, 0.0, 1.0),
-            Color::new(1.0, 1.0, 1.0, 1.0),
-        ),
-    );
-
-
 
     let framebuffer_extent = Extent::new(512, 512);
 

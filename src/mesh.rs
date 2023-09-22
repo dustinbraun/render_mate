@@ -2,11 +2,13 @@ use crate::BoundingBox;
 use crate::BoundingVolume;
 use crate::Face;
 use crate::Intersection;
+use crate::Mat4;
 use crate::Node;
 use crate::Ray;
 use crate::Texture;
 use crate::Vec2;
 use crate::Vec3;
+use crate::Vec4;
 use crate::Vertex;
 
 pub struct Mesh<'a> {
@@ -19,7 +21,7 @@ pub struct Mesh<'a> {
 }
 
 impl<'a> Mesh<'a> {
-    pub fn new_cube(texture: &'a Texture, translation: Vec3, scale: Vec3, emission: f32) -> Mesh<'a> {
+    pub fn new_cube(texture: &'a Texture, transformation: Mat4, emission: f32) -> Mesh<'a> {
         let mut vertices = vec![
             //------------------------------------------------------------
             Vertex::new(Vec3::new(-0.5, -0.5, -0.5), Vec2::new(0.0,  0.0), Vec3::new( 0.0,  0.0, -1.0)),
@@ -85,12 +87,16 @@ impl<'a> Mesh<'a> {
             Face::new([33, 34, 35]),
         ];
         for vertex in vertices.iter_mut() {
-            vertex.position.x *= scale.x;
-            vertex.position.y *= scale.y;
-            vertex.position.z *= scale.z;
-        }
-        for vertex in vertices.iter_mut() {
-            vertex.position += translation;
+            let mut v = Vec4::new(
+                vertex.position.x,
+                vertex.position.y,
+                vertex.position.z,
+                1.0,
+            );
+            v = transformation*v;
+            vertex.position.x = v.x;
+            vertex.position.y = v.y;
+            vertex.position.z = v.z;
         }
         let mut min = vertices[0].position;
         let mut max = vertices[0].position;
@@ -134,75 +140,6 @@ impl<'a> Mesh<'a> {
 
     }
 
-    /*fn face_intersects_ray(&self, face: &Face, ray: &Ray) -> Option<Intersection> {
-        let p0 = self.vertices[face.vertex_ids[0] as usize];
-        let p1 = self.vertices[face.vertex_ids[1] as usize];
-        let p2 = self.vertices[face.vertex_ids[2] as usize];
-
-        let v0v1 = p1.position - p0.position;
-        let v0v2 = p2.position - p0.position;
-        let n = v0v1.cross(v0v2);
-
-        let denom = n.dot(n);
-
-        let n_dot_ray_dir = n.dot(ray.direction);
-        if n_dot_ray_dir.abs() < 0.00001 {
-            return None;
-        }
-        let d = -n.dot(p0.position);
-        let t = -(n.dot(ray.origin) + d) / n_dot_ray_dir;
-        if t < 0.0 {
-            return None;
-        }
-        let p = ray.origin + ray.direction*t;
-        let edge0 = p1.position - p0.position;
-        let vp0 = p - p0.position;
-        let c = edge0.cross(vp0);
-        if n.dot(c) < 0.0 {
-            return None;
-        }
-
-        let w = n.dot(c)/denom;
-
-        let edge1 = p2.position - p1.position;
-        let vp1 = p - p1.position;
-        let c = edge1.cross(vp1);
-        if n.dot(c) < 0.0 {
-            return None;
-        }
-
-        let u = n.dot(c)/denom;
-
-        let edge2 = p0.position - p2.position;
-        let vp2 = p - p2.position;
-        let c = edge2.cross(vp2);
-        if n.dot(c) < 0.0 {
-            return None;
-        }
-
-        let v = n.dot(c)/denom;
-
-        if t > ray.t_max || t < ray.t_min {
-            return None;
-        }
-
-        let mut normal = n.normalize();
-        if normal.dot(ray.direction) > 0.0 {
-            normal *= -1.0;
-        }
-
-        let texture_coords = p0.texture_coords*u + p1.texture_coords*v + p2.texture_coords*w;
-
-        Some(Intersection {
-            position: p,
-            normal,
-            color: self.texture.sample(texture_coords),
-            t: t,
-            emission: self.emission,
-        })
-    }*/
-
-
     // See https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
     // for implementation details.
     pub fn ray_intersects_face(&self, ray: &Ray, face: &Face) -> Option<Intersection> {
@@ -228,27 +165,15 @@ impl<'a> Mesh<'a> {
             return None;
         }
         let t = f * edge2.dot(q);
-        //if t < 0.00001 {
-        //    return None;
-        //}
         if t > ray.t_max || t < ray.t_min {
             return None;
         }
-        
-        //let mut normal = edge1.cross(edge2).normalize();
-        //if normal.dot(ray.direction) > 0.0 {
-        //    normal *= -1.0;
-        //}
-        
         let w = 1.0 - u - v;
-
         let texture_coords = v0.texture_coords*w + v1.texture_coords*u + v2.texture_coords*v;
-
         let mut normal = v0.normal*w + v1.normal*u + v2.normal*v;
         if normal.dot(ray.direction) > 0.0 {
             normal *= -1.0;
         }
-
         Some(Intersection {
             position: ray.origin + ray.direction*t,
             normal,
