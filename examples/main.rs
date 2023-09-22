@@ -12,12 +12,12 @@ use render_mate::Vec3;
 fn main() {
     let mut scene = Scene::new();
 
-    let white_texture = Texture::from("white_texture.bmp");
-    let red_texture = Texture::from("red_texture.png");
-    let green_texture = Texture::from("green_texture.png");
-    let blue_texture = Texture::from("blue_texture.png");
-    let yellow_texture = Texture::from("yellow_texture.png");
-    let null_texture = Texture::from("null_texture.bmp");
+    let white_texture = Texture::from("data/textures/white_texture.bmp");
+    let red_texture = Texture::from("data/textures/red_texture.png");
+    let green_texture = Texture::from("data/textures/green_texture.png");
+    let blue_texture = Texture::from("data/textures/blue_texture.png");
+    let yellow_texture = Texture::from("data/textures/yellow_texture.png");
+    let null_texture = Texture::from("data/textures/null_texture.bmp");
 
     let sky_box = Mesh::new_cube(
         &white_texture,
