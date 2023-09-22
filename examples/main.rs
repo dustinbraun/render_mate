@@ -5,6 +5,7 @@ use render_mate::Framebuffer;
 use render_mate::Mesh;
 use render_mate::PointLight;
 use render_mate::Scene;
+use render_mate::Sphere;
 use render_mate::Texture;
 use render_mate::Vec3;
 
@@ -54,14 +55,25 @@ fn main() {
 
     scene.add_node(&light2);
 
-    let light3 = Mesh::new_cube(
-        &yellow_texture,
+    //let light3 = Mesh::new_cube(
+    //    &yellow_texture,
+    //    Vec3::new(0.0, -1.0, 1.0),
+    //    Vec3::new(0.25, 0.25, 0.25),
+    //    5.0,
+    //);
+
+    //scene.add_node(&light3);
+
+
+    let light4 = Sphere::new(
         Vec3::new(0.0, -1.0, 1.0),
-        Vec3::new(0.25, 0.25, 0.25),
-        5.0,
+        0.25,
+        Color::new(1.0, 1.0, 1.0, 1.0),
+        3.0,
     );
 
-    scene.add_node(&light3);
+    scene.add_node(&light4);
+
 
     let box0 = Mesh::new_cube(
         &null_texture,

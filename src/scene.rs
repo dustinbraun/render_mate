@@ -31,7 +31,7 @@ impl<'a> Scene<'a> {
     }
 
     pub fn render(&self, camera: &Camera, framebuffer: &mut Framebuffer) {
-        let sample_count = 1000;
+        let sample_count = 200;
         for y in 0..framebuffer.get_extent().height {
             for x in 0..framebuffer.get_extent().width {
                 let ray = camera.get_ray(x, y);

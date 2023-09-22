@@ -62,4 +62,8 @@ impl Framebuffer {
         }
         image.save(path).unwrap();
     }
+
+    pub fn from_merge(_framebuffers: &[Framebuffer]) -> Framebuffer {
+        unimplemented!()
+    }
 }

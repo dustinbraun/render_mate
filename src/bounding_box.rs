@@ -16,6 +16,11 @@ impl BoundingBox {
             max,
         }
     }
+
+    #[inline]
+    pub fn size(&self) -> Vec3 {
+        self.max - self.min
+    }
 }
 
 impl BoundingVolume for BoundingBox {
