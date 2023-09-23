@@ -37,7 +37,7 @@ impl Vec3 {
 
     #[inline]
     pub fn reflect(self, n: Vec3) -> Vec3 {
-        self - n*2.0*n.dot(self)/n.len()
+        self - n*2.0*n.dot(self)  /n.len()
     }
 
     #[inline]

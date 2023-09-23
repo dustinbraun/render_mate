@@ -9,15 +9,17 @@ pub struct Sphere {
     pub radius: f32,
     pub color: Color,
     pub emission: f32,
+    pub scatter: f32,
 }
 
 impl Sphere {
-    pub fn new(position: Vec3, radius: f32, color: Color, emission: f32) -> Sphere {
+    pub fn new(position: Vec3, radius: f32, color: Color, emission: f32, scatter: f32) -> Sphere {
         Sphere {
             position,
             radius,
             color,
             emission,
+            scatter,
         }
     }
 }
@@ -45,6 +47,7 @@ impl Node for Sphere {
             color: self.color,
             t,
             emission: self.emission,
+            scatter: self.scatter,
         })
     }
 }

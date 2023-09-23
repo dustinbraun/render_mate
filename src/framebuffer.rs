@@ -49,10 +49,15 @@ impl Framebuffer {
     }
 
     pub fn save(&self, path: &str) {
+        let gamma = 2.2;
         let mut image = image::RgbImage::new(self.extent.width, self.extent.height);
         for y in 0..self.extent.height {
             for x in 0..self.extent.width {
-                let color = self.get_pixel(x, y);
+                let mut color = self.get_pixel(x, y);
+                color.r = color.r.powf(1.0/gamma);
+                color.g = color.g.powf(1.0/gamma);
+                color.b = color.b.powf(1.0/gamma);
+
                 let r = (255.0*color.r).clamp(0.0, 255.0) as u8;
                 let g = (255.0*color.g).clamp(0.0, 255.0) as u8;
                 let b = (255.0*color.b).clamp(0.0, 255.0) as u8;

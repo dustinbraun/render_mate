@@ -26,6 +26,8 @@ mod point_light;
 pub use point_light::PointLight;
 mod ray;
 pub use ray::Ray;
+mod real;
+pub use real::Real;
 mod scene;
 pub use scene::Scene;
 mod sphere;

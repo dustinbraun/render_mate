@@ -16,12 +16,13 @@ pub struct Mesh<'a> {
     faces: Vec<Face>,
     texture: &'a Texture,
     emission: f32,
+    scatter: f32,
     bounding_box: BoundingBox,
 
 }
 
 impl<'a> Mesh<'a> {
-    pub fn new_cube(texture: &'a Texture, transformation: Mat4, emission: f32) -> Mesh<'a> {
+    pub fn new_cube(texture: &'a Texture, transformation: Mat4, emission: f32, scatter: f32) -> Mesh<'a> {
         let mut vertices = vec![
             //------------------------------------------------------------
             Vertex::new(Vec3::new(-0.5, -0.5, -0.5), Vec2::new(0.0,  0.0), Vec3::new( 0.0,  0.0, -1.0)),
@@ -135,6 +136,7 @@ impl<'a> Mesh<'a> {
             faces,
             texture,
             emission,
+            scatter,
             bounding_box,
         }
 
@@ -180,6 +182,7 @@ impl<'a> Mesh<'a> {
             color: self.texture.sample(texture_coords),
             t,
             emission: self.emission,
+            scatter: self.scatter,
         })
     }
 }

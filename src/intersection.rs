@@ -8,4 +8,5 @@ pub struct Intersection {
     pub color: Color,
     pub t: f32,
     pub emission: f32,
+    pub scatter: f32,
 }

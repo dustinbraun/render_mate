@@ -63,20 +63,36 @@ impl<'a> Scene<'a> {
                     intersection.color*intersection.emission
                 }
                 else {
-                    let ray_direction = compute_random_hemisphere_point(&intersection.normal);
-                    let ray_origin = intersection.position;
-                    let next_ray = Ray {
-                        origin: ray_origin,
-                        direction: ray_direction,
-                        t_min: 0.00001,
-                        t_max: 10000.0,
-                    };
+                    if intersection.scatter > 0.5 {
+                        let ray_direction = compute_random_hemisphere_point(&intersection.normal);
+                        let ray_origin = intersection.position;
+                        let next_ray = Ray {
+                            origin: ray_origin,
+                            direction: ray_direction,
+                            t_min: 0.00001,
+                            t_max: 10000.0,
+                        };
 
-                    let p = 1.0/(3.14*2.0);
-                    let cos_theta = next_ray.direction.dot(intersection.normal);
-                    let brdf = intersection.color/3.14;
-                    let incoming = self.cast_ray(&next_ray, depth - 1);
-                    brdf * incoming * cos_theta / p
+                        let p = 1.0/(3.14*2.0);
+                        let cos_theta = next_ray.direction.dot(intersection.normal);
+                        let brdf = intersection.color/3.14;
+                        let incoming = self.cast_ray(&next_ray, depth - 1);
+                        brdf * incoming * cos_theta / p
+                    }
+                    else {
+                        let ray_direction = ray.direction.reflect(intersection.normal);
+                        let ray_origin = intersection.position;
+                        let next_ray = Ray {
+                            origin: ray_origin,
+                            direction: ray_direction,
+                            t_min: 0.00001,
+                            t_max: 10000.0,
+                        };
+
+                        
+                        let incoming = self.cast_ray(&next_ray, depth - 1);
+                        incoming * intersection.color
+                    }
                 }
             }
             else {
