@@ -98,7 +98,27 @@ impl<'a> Mesh<'a> {
             vertex.position.x = v.x;
             vertex.position.y = v.y;
             vertex.position.z = v.z;
+            //vertex.normal = Mat3::from(transformation.inverse().transpose())*vertex.normal;
+            //vertex.normal = vertex.normal.normalize();
         }
+
+        for vertex in vertices.iter_mut() {
+            vertex.normal.x = 0.0;
+            vertex.normal.y = 0.0;
+            vertex.normal.z = 0.0;
+        }
+        for face in faces.iter() {
+            let edge1 = vertices[face.vertex_ids[1] as usize].position - vertices[face.vertex_ids[0] as usize].position;
+            let edge2 = vertices[face.vertex_ids[2] as usize].position - vertices[face.vertex_ids[0] as usize].position;
+            let normal = edge1.cross(edge2).normalize();
+            vertices[face.vertex_ids[0] as usize].normal += normal;
+            vertices[face.vertex_ids[1] as usize].normal += normal;
+            vertices[face.vertex_ids[2] as usize].normal += normal;
+        }
+        for vertex in vertices.iter_mut() {
+            vertex.normal = vertex.normal.normalize();
+        }
+
         let mut min = vertices[0].position;
         let mut max = vertices[0].position;
         for vertex in vertices.iter() {

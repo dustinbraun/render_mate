@@ -3,10 +3,10 @@ use crate::Vec4;
 
 #[derive(Copy, Clone)]
 pub struct Mat4(
-    (f32, f32, f32, f32),
-    (f32, f32, f32, f32),
-    (f32, f32, f32, f32),
-    (f32, f32, f32, f32),
+    pub (f32, f32, f32, f32),
+    pub (f32, f32, f32, f32),
+    pub (f32, f32, f32, f32),
+    pub (f32, f32, f32, f32),
 );
 
 impl Mat4 {
@@ -62,6 +62,19 @@ impl Mat4 {
             (0.0, 0.0, 1.0, 0.0),
             (0.0, 0.0, 0.0, 1.0),
         )
+    }
+
+    pub fn transpose(self) -> Mat4 {
+        Mat4(
+            (0.0, 1.0, 2.0, 3.0),
+            (0.1, 1.1, 2.1, 3.1),
+            (0.2, 1.2, 2.2, 3.2),
+            (0.3, 1.3, 2.3, 3.3),
+        )
+    }
+
+    pub fn inverse(self) -> Mat4 {
+        unimplemented!()
     }
 }
 

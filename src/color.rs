@@ -16,6 +16,10 @@ impl Color {
             a,
         }
     }
+
+    pub fn get_intensity(&self) -> f32 {
+        (self.r + self.g + self.b)/3.0
+    }
 }
 
 impl std::ops::Add<Color> for Color {

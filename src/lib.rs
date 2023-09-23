@@ -16,6 +16,8 @@ mod framebuffer;
 pub use framebuffer::Framebuffer;
 mod intersection;
 pub use intersection::Intersection;
+mod mat3;
+pub use mat3::Mat3;
 mod mat4;
 pub use mat4::Mat4;
 mod mesh;

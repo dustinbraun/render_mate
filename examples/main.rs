@@ -12,7 +12,7 @@ use render_mate::Vec3;
 fn main() {
     let mut scene = Scene::new();
 
-    let grey_texture = Texture::from("data/textures/white_texture.bmp");
+    let grey_texture = Texture::from("data/textures/grey_texture.png");
     let white_texture = Texture::from("data/textures/white_texture.bmp");
     let red_texture = Texture::from("data/textures/red_texture.png");
     let green_texture = Texture::from("data/textures/green_texture.png");
@@ -54,9 +54,9 @@ fn main() {
 
     let light3 = Sphere::new(
         Vec3::new(0.0, -1.0, 1.0),
-        0.125,
+        0.1,
         Color::new(1.0, 1.0, 1.0, 1.0),
-        5.0,
+        40.0,
         1.0,
     );
     scene.add_node(&light3);

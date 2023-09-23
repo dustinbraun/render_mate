@@ -1,3 +1,5 @@
+use crate::Mat3;
+
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3 {
     pub x: f32,
@@ -180,6 +182,18 @@ impl std::ops::Div<Vec3> for f32 {
             x: rhs.x*inv,
             y: rhs.y*inv,
             z: rhs.z*inv,
+        }
+    }
+}
+
+impl std::ops::Mul<Mat3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Mat3) -> Vec3 {
+        Vec3 {
+            x: self.x * rhs.0.0 + self.y * rhs.1.0 + self.z * rhs.2.0,
+            y: self.x * rhs.0.1 + self.y * rhs.1.1 + self.z * rhs.2.1,
+            z: self.x * rhs.0.2 + self.y * rhs.1.2 + self.z * rhs.2.2,
         }
     }
 }
