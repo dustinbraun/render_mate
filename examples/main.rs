@@ -53,7 +53,7 @@ fn main() {
     //scene.add_node(&light2);
 
     let light3 = Sphere::new(
-        Vec3::new(0.0, -1.0, 1.0),
+        Vec3::new(0.0, -0.75, 1.0),
         0.1,
         Color::new(1.0, 1.0, 1.0, 1.0),
         40.0,
@@ -77,13 +77,30 @@ fn main() {
     );
     scene.add_node(&box1);
 
-    /*let mirror = Mesh::new_cube(
-        &null_texture,
+    let mirror0 = Mesh::new_cube(
+        &red_texture,
         Mat4::new_translation(Vec3::new(0.0, 0.0, 1.5))*Mat4::new_scale(Vec3::new(3.0, 3.0, 0.1)),
         0.0,
         0.0,
     );
-    scene.add_node(&mirror);*/
+    scene.add_node(&mirror0);
+
+    let mirror1 = Mesh::new_cube(
+        &red_texture,
+        Mat4::new_translation(Vec3::new(0.0, 0.0, -1.5))*Mat4::new_scale(Vec3::new(3.0, 3.0, 0.1)),
+        0.0,
+        0.0,
+    );
+    scene.add_node(&mirror1);
+
+    let mirror_sphere = Sphere::new(
+        Vec3::new(0.0, -1.25, 1.0),
+        0.25,
+        Color::new(1.0, 1.0, 1.0, 1.0),
+        0.0,
+        0.0,
+    );
+    scene.add_node(&mirror_sphere);
 
     let framebuffer_extent = Extent::new(512, 512);
 

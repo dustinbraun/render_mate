@@ -31,13 +31,13 @@ impl<'a> Scene<'a> {
     }
 
     pub fn render(&self, camera: &Camera, framebuffer: &mut Framebuffer) {
-        let sample_count = 2000;
+        let sample_count = 200;
         for y in 0..framebuffer.get_extent().height {
             for x in 0..framebuffer.get_extent().width {
                 let mut average_color = Color::new(0.0, 0.0, 0.0, 1.0);
                 for _ in 0..sample_count {
                     let ray = camera.get_ray(x, y);
-                    average_color = average_color + self.cast_ray(&ray, 5);
+                    average_color = average_color + self.cast_ray(&ray, 10);
                 }
                 average_color = average_color*(1.0/sample_count as f32);
                 framebuffer.put_pixel(x, y, average_color);
@@ -76,6 +76,7 @@ impl<'a> Scene<'a> {
                         let p = 1.0/(3.14*2.0);
                         let cos_theta = next_ray.direction.dot(intersection.normal);
                         let brdf = intersection.color/3.14;
+
                         let incoming = self.cast_ray(&next_ray, depth - 1);
                         //brdf * incoming * cos_theta / p
                         incoming*intersection.color*cos_theta
@@ -91,9 +92,9 @@ impl<'a> Scene<'a> {
                             t_max: 10000.0,
                         };
 
-                        
+                        let cos_theta = next_ray.direction.dot(intersection.normal);
                         let incoming = self.cast_ray(&next_ray, depth - 1);
-                        incoming * intersection.color
+                        incoming * intersection.color * cos_theta
                     }
                 }
             }
