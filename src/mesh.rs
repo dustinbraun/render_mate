@@ -1,28 +1,38 @@
 use crate::BoundingBox;
 use crate::BoundingVolume;
+use crate::Color;
 use crate::Face;
-use crate::Intersection;
 use crate::Mat4;
-use crate::Node;
 use crate::Ray;
-use crate::Texture;
 use crate::Vec2;
 use crate::Vec3;
 use crate::Vec4;
 use crate::Vertex;
+use crate::Scene;
+use crate::Intersection;
+use crate::Material;
 
 pub struct Mesh<'a> {
     vertices: Vec<Vertex>,
     faces: Vec<Face>,
-    texture: &'a Texture,
-    emission: f32,
-    scatter: f32,
     bounding_box: BoundingBox,
-
+    material: &'a dyn Material,
 }
 
 impl<'a> Mesh<'a> {
-    pub fn new_cube(texture: &'a Texture, transformation: Mat4, emission: f32, scatter: f32) -> Mesh<'a> {
+    pub fn trace(&self, scene: &Scene, ray: &Ray, intersection: &Intersection, depth: u32) -> Color {
+        self.material.trace(scene, ray, intersection, depth)
+    }
+
+    pub fn vertices(&self) -> &[Vertex] {
+        &self.vertices
+    }
+
+    pub fn faces(&self) -> &[Vertex] {
+        &self.vertices
+    }
+
+    pub fn new_cube(material: &'a dyn Material, transformation: Mat4) -> Mesh<'a> {
         let mut vertices = vec![
             //------------------------------------------------------------
             Vertex::new(Vec3::new(-0.5, -0.5, -0.5), Vec2::new(0.0,  0.0), Vec3::new( 0.0,  0.0, -1.0)),
@@ -154,17 +164,13 @@ impl<'a> Mesh<'a> {
         Mesh {
             vertices,
             faces,
-            texture,
-            emission,
-            scatter,
             bounding_box,
+            material,
         }
 
     }
 
-    // See https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-    // for implementation details.
-    pub fn ray_intersects_face(&self, ray: &Ray, face: &Face) -> Option<Intersection> {
+    pub fn face_intersects_ray(&self, ray: &Ray, face: &'a Face) -> Option<Intersection> {
         let v0 = self.vertices[face.vertex_ids[0] as usize];
         let v1 = self.vertices[face.vertex_ids[1] as usize];
         let v2 = self.vertices[face.vertex_ids[2] as usize];
@@ -191,30 +197,27 @@ impl<'a> Mesh<'a> {
             return None;
         }
         let w = 1.0 - u - v;
-        let texture_coords = v0.texture_coords*w + v1.texture_coords*u + v2.texture_coords*v;
+        let _texture_coords = v0.texture_coords*w + v1.texture_coords*u + v2.texture_coords*v;
         let mut normal = v0.normal*w + v1.normal*u + v2.normal*v;
         if normal.dot(ray.direction) > 0.0 {
             normal *= -1.0;
         }
         Some(Intersection {
-            position: ray.origin + ray.direction*t,
-            normal,
-            color: self.texture.sample(texture_coords),
+            mesh: self,
+            face,
             t,
-            emission: self.emission,
-            scatter: self.scatter,
+            u,
+            v,
         })
     }
-}
 
-impl<'a> Node for Mesh<'a> {
-    fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
+    pub fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
         if !self.bounding_box.intersects_ray(ray) {
             return None;
         }
         let mut best: Option<Intersection> = None;
         for face in self.faces.iter() {
-            if let Some(intersection) = self.ray_intersects_face(ray, face) {
+            if let Some(intersection) = self.face_intersects_ray(ray, face) {
                 if let Some(best_intersection) = best {
                     if intersection.t < best_intersection.t {
                         best = Some(intersection);

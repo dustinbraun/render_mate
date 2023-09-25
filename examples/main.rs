@@ -5,9 +5,11 @@ use render_mate::Framebuffer;
 use render_mate::Mat4;
 use render_mate::Mesh;
 use render_mate::Scene;
-use render_mate::Sphere;
 use render_mate::Texture;
 use render_mate::Vec3;
+use render_mate::DiffuseMaterial;
+use render_mate::LightMaterial;
+use render_mate::MirrorMaterial;
 
 fn main() {
     let mut scene = Scene::new();
@@ -20,87 +22,72 @@ fn main() {
     let yellow_texture = Texture::from("data/textures/yellow_texture.png");
     let null_texture = Texture::from("data/textures/null_texture.bmp");
 
+    let white_diffuse_material = DiffuseMaterial {
+        texture: &white_texture,
+    };
+
+    let null_diffuse_material = DiffuseMaterial {
+        texture: &null_texture,
+    };
+
+    let mirror_material = MirrorMaterial {
+
+    };
+
+    let white_light_material = LightMaterial {
+        color: Color::new(
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+        ),
+        intensity: 20.0,
+    };
+
     let sky_box = Mesh::new_cube(
-        &white_texture,
+        &white_diffuse_material,
         Mat4::new_translation(Vec3::new(0.0, 0.0, 0.0))*Mat4::new_scale(Vec3::new(3.0, 3.0, 3.0)),
-        0.0,
-        1.0,
     );
     scene.add_node(&sky_box);
 
     let light0 = Mesh::new_cube(
-        &blue_texture,
-        Mat4::new_translation(Vec3::new(0.0, 1.74, 1.0))*Mat4::new_scale(Vec3::new(0.5, 0.5, 0.5)),
-        5.0,
-        1.0,
+        &white_light_material,
+        Mat4::new_translation(Vec3::new(0.0, -0.75, 1.0))*Mat4::new_scale(Vec3::new(0.25, 0.25, 0.25)),
     );
-    //scene.add_node(&light0);
-
-    let light1 = Mesh::new_cube(
-        &red_texture,
-        Mat4::new_translation(Vec3::new(-1.74, 0.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 0.5, 0.5)),
-        5.0,
-        1.0,
-    );
-    //scene.add_node(&light1);
-
-    let light2 = Mesh::new_cube(
-        &green_texture,
-        Mat4::new_translation(Vec3::new(1.74, 0.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 0.5, 0.5)),
-        5.0,
-        1.0,
-    );
-    //scene.add_node(&light2);
-
-    let light3 = Sphere::new(
-        Vec3::new(0.0, -0.75, 1.0),
-        0.1,
-        Color::new(1.0, 1.0, 1.0, 1.0),
-        40.0,
-        1.0,
-    );
-    scene.add_node(&light3);
+    scene.add_node(&light0);
 
     let box0 = Mesh::new_cube(
-        &null_texture,
+        &null_diffuse_material,
         Mat4::new_translation(Vec3::new(-0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(3.14/8.0),
-        0.0,
-        1.0,
     );
     scene.add_node(&box0);
 
     let box1 = Mesh::new_cube(
-        &null_texture,
+        &null_diffuse_material,
         Mat4::new_translation(Vec3::new(0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(-3.14/8.0),
-        0.0,
-        1.0,
     );
     scene.add_node(&box1);
 
     let mirror0 = Mesh::new_cube(
-        &red_texture,
+        &mirror_material,
         Mat4::new_translation(Vec3::new(0.0, 0.0, 1.5))*Mat4::new_scale(Vec3::new(3.0, 3.0, 0.1)),
-        0.0,
-        0.0,
     );
     scene.add_node(&mirror0);
 
     let mirror1 = Mesh::new_cube(
-        &red_texture,
+        &mirror_material,
         Mat4::new_translation(Vec3::new(0.0, 0.0, -1.5))*Mat4::new_scale(Vec3::new(3.0, 3.0, 0.1)),
-        0.0,
-        0.0,
     );
     scene.add_node(&mirror1);
 
-    let mirror_sphere = Sphere::new(
+    /*let mirror_sphere = Sphere::new(
         Vec3::new(0.0, -1.25, 1.0),
         0.25,
         Color::new(1.0, 1.0, 1.0, 1.0),
         0.0,
         0.0,
     );
-    scene.add_node(&mirror_sphere);
+    scene.add_node(&mirror_sphere);*/
 
     let framebuffer_extent = Extent::new(512, 512);
 

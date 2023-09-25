@@ -1,12 +1,11 @@
-use crate::Color;
-use crate::Vec3;
+use crate::Face;
+use crate::Mesh;
 
 #[derive(Copy, Clone)]
-pub struct Intersection {
-    pub position: Vec3,
-    pub normal: Vec3,
-    pub color: Color,
+pub struct Intersection<'a> {
+    pub mesh: &'a Mesh<'a>,
+    pub face: &'a Face,
     pub t: f32,
-    pub emission: f32,
-    pub scatter: f32,
+    pub u: f32,
+    pub v: f32,
 }
