@@ -1,6 +1,7 @@
 use crate::Face;
 use crate::Mesh;
 use crate::Sphere;
+use crate::AccelerationStructure;
 
 #[derive(Copy, Clone)]
 pub struct Intersection<'a> {
@@ -18,5 +19,11 @@ pub enum IntersectionPayload<'a> {
     },
     Sphere {
         sphere: &'a Sphere,
+    },
+    AccelerationStructure {
+        acceleration_structure: &'a AccelerationStructure,
+        face: &'a Face,
+        u: f32,
+        v: f32,
     },
 }

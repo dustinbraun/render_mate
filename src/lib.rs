@@ -54,3 +54,6 @@ mod sphere;
 pub use sphere::Sphere;
 mod geometry;
 pub use geometry::Geometry;
+
+mod acceleration_structure;
+pub use acceleration_structure::AccelerationStructure;

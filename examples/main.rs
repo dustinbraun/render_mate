@@ -1,3 +1,4 @@
+use render_mate::AccelerationStructure;
 use render_mate::Camera;
 use render_mate::Color;
 use render_mate::Extent;
@@ -18,13 +19,15 @@ fn main() {
 
     //let grey_texture = Texture::from("data/textures/grey_texture.png");
     let white_texture = Texture::from("data/textures/white_texture.bmp");
-    //let red_texture = Texture::from("data/textures/red_texture.png");
+    let red_texture = Texture::from("data/textures/red_texture.png");
     //let green_texture = Texture::from("data/textures/green_texture.png");
     //let blue_texture = Texture::from("data/textures/blue_texture.png");
     //let yellow_texture = Texture::from("data/textures/yellow_texture.png");
     let null_texture = Texture::from("data/textures/null_texture.bmp");
 
     let white_diffuse_material = DiffuseMaterial::new(&white_texture);
+
+    let red_diffuse_material = DiffuseMaterial::new(&red_texture);
 
     let null_diffuse_material = DiffuseMaterial::new(&null_texture);
 
@@ -66,6 +69,18 @@ fn main() {
         0.25,
     );
     scene.add_node(Node::new(&mirror_sphere, &mirror_material));
+
+
+    let teapot = Mesh::from_obj("data/obj/teacup.obj", Mat4::new_scale(Vec3::new(0.25, 0.25, 0.25))*Mat4::new_rotation_y(3.14/4.0));
+    let teapot_as = AccelerationStructure::new(teapot.vertices(), teapot.faces());
+    scene.add_node(Node::new(
+        &teapot_as,
+        &red_diffuse_material,
+    ));
+    //scene.add_node(Node::new(
+    //    &teapot,
+    //    &red_diffuse_material,
+    //));
 
 
     /*let mirror0 = Mesh::new_cube(
