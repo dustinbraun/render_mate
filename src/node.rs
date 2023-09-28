@@ -1,6 +1,8 @@
-use crate::Intersection;
-use crate::Ray;
+use crate::Geometry;
+use crate::Material;
 
-pub trait Node: Sync {
-    fn intersects_ray(&self, ray: &Ray) -> Option<Intersection>;
+#[derive(Copy, Clone)]
+pub struct Node<'a> {
+    pub geometry: &'a dyn Geometry,
+    pub material: &'a dyn Material,
 }

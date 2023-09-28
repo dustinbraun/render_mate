@@ -5,11 +5,13 @@ use render_mate::Framebuffer;
 use render_mate::Mat4;
 use render_mate::Mesh;
 use render_mate::Scene;
+use render_mate::Sphere;
 use render_mate::Texture;
 use render_mate::Vec3;
 use render_mate::DiffuseMaterial;
 use render_mate::LightMaterial;
 use render_mate::MirrorMaterial;
+use render_mate::Node;
 
 fn main() {
     let mut scene = Scene::new();
@@ -44,31 +46,65 @@ fn main() {
         intensity: 20.0,
     };
 
-    let sky_box = Mesh::new_cube(
+    let sky_box_geometry = Mesh::new_cube(
         &white_diffuse_material,
         Mat4::new_translation(Vec3::new(0.0, 0.0, 0.0))*Mat4::new_scale(Vec3::new(3.0, 3.0, 3.0)),
     );
-    scene.add_node(&sky_box);
+    let sky_box_node = Node {
+        geometry: &sky_box_geometry,
+        material: &white_diffuse_material,
+    };
+    scene.add_node(sky_box_node);
 
-    let light0 = Mesh::new_cube(
-        &white_light_material,
-        Mat4::new_translation(Vec3::new(0.0, -0.75, 1.0))*Mat4::new_scale(Vec3::new(0.25, 0.25, 0.25)),
-    );
-    scene.add_node(&light0);
+    //let light0 = Mesh::new_cube(
+    //    &white_light_material,
+    //    Mat4::new_translation(Vec3::new(0.0, -0.75, 1.0))*Mat4::new_scale(Vec3::new(0.25, 0.25, 0.25)),
+    //);
+    //scene.add_node(&light0);
+    let light0 = Sphere {
+        position: Vec3::new(0.0, -0.75, 1.0),
+        radius: 0.125,
+    };
+    let light0_node = Node {
+        geometry: &light0,
+        material: &white_light_material,
+    };
+    scene.add_node(light0_node);
+
 
     let box0 = Mesh::new_cube(
         &null_diffuse_material,
         Mat4::new_translation(Vec3::new(-0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(3.14/8.0),
     );
-    scene.add_node(&box0);
+    let box0_node = Node {
+        geometry: &box0,
+        material: &null_diffuse_material,
+    };
+    scene.add_node(box0_node);
 
     let box1 = Mesh::new_cube(
         &null_diffuse_material,
         Mat4::new_translation(Vec3::new(0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(-3.14/8.0),
     );
-    scene.add_node(&box1);
+    let box1_node = Node {
+        geometry: &box1,
+        material: &null_diffuse_material,
+    };
+    scene.add_node(box1_node);
 
-    let mirror0 = Mesh::new_cube(
+
+    let mirror_sphere = Sphere::new(
+        Vec3::new(0.0, -1.25, 1.0),
+        0.25,
+    );
+    let mirror_sphere_node = Node {
+        geometry: &mirror_sphere,
+        material: &mirror_material,
+    };
+    scene.add_node(mirror_sphere_node);
+
+
+    /*let mirror0 = Mesh::new_cube(
         &mirror_material,
         Mat4::new_translation(Vec3::new(0.0, 0.0, 1.5))*Mat4::new_scale(Vec3::new(3.0, 3.0, 0.1)),
     );
@@ -78,7 +114,7 @@ fn main() {
         &mirror_material,
         Mat4::new_translation(Vec3::new(0.0, 0.0, -1.5))*Mat4::new_scale(Vec3::new(3.0, 3.0, 0.1)),
     );
-    scene.add_node(&mirror1);
+    scene.add_node(&mirror1);*/
 
     /*let mirror_sphere = Sphere::new(
         Vec3::new(0.0, -1.25, 1.0),

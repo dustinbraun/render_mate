@@ -10,7 +10,9 @@ use crate::Vec4;
 use crate::Vertex;
 use crate::Scene;
 use crate::Intersection;
+use crate::IntersectionPayload;
 use crate::Material;
+use crate::Geometry;
 
 pub struct Mesh<'a> {
     vertices: Vec<Vertex>,
@@ -203,15 +205,19 @@ impl<'a> Mesh<'a> {
             normal *= -1.0;
         }
         Some(Intersection {
-            mesh: self,
-            face,
             t,
-            u,
-            v,
+            payload: IntersectionPayload::MeshIntersectionPayload {
+                mesh: self,
+                face,
+                u,
+                v,
+            },
         })
     }
+}
 
-    pub fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
+impl<'a> Geometry for Mesh<'a> {
+    fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
         if !self.bounding_box.intersects_ray(ray) {
             return None;
         }

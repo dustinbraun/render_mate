@@ -2,11 +2,11 @@ use crate::Camera;
 use crate::Color;
 use crate::Framebuffer;
 use crate::Intersection;
-use crate::Mesh;
 use crate::Ray;
+use crate::Node;
 
 pub struct Scene<'a> {
-    nodes: Vec<&'a Mesh<'a>>,
+    nodes: Vec<Node<'a>>,
 }
 
 impl<'a> Scene<'a> {
@@ -16,12 +16,12 @@ impl<'a> Scene<'a> {
         }
     }
 
-    pub fn add_node(&mut self, node: &'a Mesh<'a>) {
+    pub fn add_node(&mut self, node: Node<'a>) {
         self.nodes.push(node);
     }
 
     pub fn render(&self, camera: &Camera, framebuffer: &mut Framebuffer) {
-        let sample_count = 200;
+        let sample_count = 500;
         for y in 0..framebuffer.get_extent().height {
             for x in 0..framebuffer.get_extent().width {
                 let mut average_color = Color::new(0.0, 0.0, 0.0, 1.0);
@@ -38,24 +38,24 @@ impl<'a> Scene<'a> {
 
     pub fn trace(&self, ray: &Ray, depth: u32) -> Color {
         let mut best: Option<Intersection> = None;
-        let mut best_mesh: Option<&Mesh> = None;
+        let mut best_mesh: Option<Node> = None;
         for node in self.nodes.iter() {
-            if let Some(intersection) = node.intersects_ray(ray) {
+            if let Some(intersection) = node.geometry.intersects_ray(ray) {
                 if let Some(best_intersection) = best {
                     if intersection.t < best_intersection.t {
                         best = Some(intersection);
-                        best_mesh = Some(node);
+                        best_mesh = Some(*node);
                     }
                 }
                 else {
                     best = Some(intersection);
-                    best_mesh = Some(node);
+                    best_mesh = Some(*node);
                 }
             }
         }
         if let Some(best_intersection) = best {
             if let Some(best_mesh) = best_mesh {
-                best_mesh.trace(self, ray, &best_intersection, depth)
+                best_mesh.material.trace(self, ray, &best_intersection, depth)
             }
             else {
                 Color::new(

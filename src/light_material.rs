@@ -9,6 +9,15 @@ pub struct LightMaterial {
     pub intensity: f32,
 }
 
+impl LightMaterial {
+    pub fn new(color: Color, intensity: f32) -> LightMaterial {
+        LightMaterial {
+            color,
+            intensity,
+        }
+    }
+}
+
 impl<'a> Material for LightMaterial {
     fn trace(&self, _scene: &Scene, _ray: &Ray, _intersection: &Intersection, _depth: u32) -> Color {
         //let u = intersection.u;
