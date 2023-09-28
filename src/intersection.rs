@@ -10,13 +10,13 @@ pub struct Intersection<'a> {
 
 #[derive(Copy, Clone)]
 pub enum IntersectionPayload<'a> {
-    MeshIntersectionPayload {
-        mesh: &'a Mesh<'a>,
+    Mesh {
+        mesh: &'a Mesh,
         face: &'a Face,
         u: f32,
         v: f32,
     },
-    SphereIntersectionPayload {
+    Sphere {
         sphere: &'a Sphere,
     },
 }

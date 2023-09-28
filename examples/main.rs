@@ -16,92 +16,56 @@ use render_mate::Node;
 fn main() {
     let mut scene = Scene::new();
 
-    let grey_texture = Texture::from("data/textures/grey_texture.png");
+    //let grey_texture = Texture::from("data/textures/grey_texture.png");
     let white_texture = Texture::from("data/textures/white_texture.bmp");
-    let red_texture = Texture::from("data/textures/red_texture.png");
-    let green_texture = Texture::from("data/textures/green_texture.png");
-    let blue_texture = Texture::from("data/textures/blue_texture.png");
-    let yellow_texture = Texture::from("data/textures/yellow_texture.png");
+    //let red_texture = Texture::from("data/textures/red_texture.png");
+    //let green_texture = Texture::from("data/textures/green_texture.png");
+    //let blue_texture = Texture::from("data/textures/blue_texture.png");
+    //let yellow_texture = Texture::from("data/textures/yellow_texture.png");
     let null_texture = Texture::from("data/textures/null_texture.bmp");
 
-    let white_diffuse_material = DiffuseMaterial {
-        texture: &white_texture,
-    };
+    let white_diffuse_material = DiffuseMaterial::new(&white_texture);
 
-    let null_diffuse_material = DiffuseMaterial {
-        texture: &null_texture,
-    };
+    let null_diffuse_material = DiffuseMaterial::new(&null_texture);
 
-    let mirror_material = MirrorMaterial {
+    let mirror_material = MirrorMaterial::new();
 
-    };
-
-    let white_light_material = LightMaterial {
-        color: Color::new(
+    let white_light_material = LightMaterial::new(
+        Color::new(
             1.0,
             1.0,
             1.0,
             1.0,
         ),
-        intensity: 20.0,
-    };
+        15.0,
+    );
 
-    let sky_box_geometry = Mesh::new_cube(
-        &white_diffuse_material,
+    let sky_box = Mesh::new_cube(
         Mat4::new_translation(Vec3::new(0.0, 0.0, 0.0))*Mat4::new_scale(Vec3::new(3.0, 3.0, 3.0)),
     );
-    let sky_box_node = Node {
-        geometry: &sky_box_geometry,
-        material: &white_diffuse_material,
-    };
-    scene.add_node(sky_box_node);
+    scene.add_node(Node::new(&sky_box, &white_diffuse_material));
 
-    //let light0 = Mesh::new_cube(
-    //    &white_light_material,
-    //    Mat4::new_translation(Vec3::new(0.0, -0.75, 1.0))*Mat4::new_scale(Vec3::new(0.25, 0.25, 0.25)),
-    //);
-    //scene.add_node(&light0);
     let light0 = Sphere {
         position: Vec3::new(0.0, -0.75, 1.0),
         radius: 0.125,
     };
-    let light0_node = Node {
-        geometry: &light0,
-        material: &white_light_material,
-    };
-    scene.add_node(light0_node);
-
+    scene.add_node(Node::new(&light0, &white_light_material));
 
     let box0 = Mesh::new_cube(
-        &null_diffuse_material,
         Mat4::new_translation(Vec3::new(-0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(3.14/8.0),
     );
-    let box0_node = Node {
-        geometry: &box0,
-        material: &null_diffuse_material,
-    };
-    scene.add_node(box0_node);
+    scene.add_node(Node::new(&box0, &null_diffuse_material));
 
     let box1 = Mesh::new_cube(
-        &null_diffuse_material,
         Mat4::new_translation(Vec3::new(0.75, -1.0, 1.0))*Mat4::new_scale(Vec3::new(0.5, 1.0, 0.5))*Mat4::new_rotation_y(-3.14/8.0),
     );
-    let box1_node = Node {
-        geometry: &box1,
-        material: &null_diffuse_material,
-    };
-    scene.add_node(box1_node);
-
+    scene.add_node(Node::new(&box1, &null_diffuse_material));
 
     let mirror_sphere = Sphere::new(
         Vec3::new(0.0, -1.25, 1.0),
         0.25,
     );
-    let mirror_sphere_node = Node {
-        geometry: &mirror_sphere,
-        material: &mirror_material,
-    };
-    scene.add_node(mirror_sphere_node);
+    scene.add_node(Node::new(&mirror_sphere, &mirror_material));
 
 
     /*let mirror0 = Mesh::new_cube(

@@ -10,7 +10,7 @@ use crate::Texture;
 use crate::Vec3;
 
 pub struct DiffuseMaterial<'a> {
-    pub texture: &'a Texture,
+    texture: &'a Texture,
 }
 
 impl<'a> DiffuseMaterial<'a> {
@@ -31,7 +31,7 @@ impl<'a> Material for DiffuseMaterial<'a> {
                 1.0,
             );
         }
-        if let IntersectionPayload::MeshIntersectionPayload { mesh, face, u, v } = intersection.payload {
+        if let IntersectionPayload::Mesh { mesh, face, u, v } = intersection.payload {
             let w = 1.0 - u - v;
             let v0 = mesh.vertices()[face.vertex_ids[0] as usize];
             let v1 = mesh.vertices()[face.vertex_ids[1] as usize];

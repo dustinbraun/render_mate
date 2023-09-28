@@ -1,6 +1,5 @@
 use crate::BoundingBox;
 use crate::BoundingVolume;
-use crate::Color;
 use crate::Face;
 use crate::Mat4;
 use crate::Ray;
@@ -8,24 +7,17 @@ use crate::Vec2;
 use crate::Vec3;
 use crate::Vec4;
 use crate::Vertex;
-use crate::Scene;
 use crate::Intersection;
 use crate::IntersectionPayload;
-use crate::Material;
 use crate::Geometry;
 
-pub struct Mesh<'a> {
+pub struct Mesh {
     vertices: Vec<Vertex>,
     faces: Vec<Face>,
     bounding_box: BoundingBox,
-    material: &'a dyn Material,
 }
 
-impl<'a> Mesh<'a> {
-    pub fn trace(&self, scene: &Scene, ray: &Ray, intersection: &Intersection, depth: u32) -> Color {
-        self.material.trace(scene, ray, intersection, depth)
-    }
-
+impl<'a> Mesh {
     pub fn vertices(&self) -> &[Vertex] {
         &self.vertices
     }
@@ -34,7 +26,7 @@ impl<'a> Mesh<'a> {
         &self.vertices
     }
 
-    pub fn new_cube(material: &'a dyn Material, transformation: Mat4) -> Mesh<'a> {
+    pub fn new_cube(transformation: Mat4) -> Mesh {
         let mut vertices = vec![
             //------------------------------------------------------------
             Vertex::new(Vec3::new(-0.5, -0.5, -0.5), Vec2::new(0.0,  0.0), Vec3::new( 0.0,  0.0, -1.0)),
@@ -167,12 +159,11 @@ impl<'a> Mesh<'a> {
             vertices,
             faces,
             bounding_box,
-            material,
         }
 
     }
 
-    pub fn face_intersects_ray(&self, ray: &Ray, face: &'a Face) -> Option<Intersection> {
+    pub fn face_intersects_ray(&'a self, ray: &Ray, face: &'a Face) -> Option<Intersection<'a>> {
         let v0 = self.vertices[face.vertex_ids[0] as usize];
         let v1 = self.vertices[face.vertex_ids[1] as usize];
         let v2 = self.vertices[face.vertex_ids[2] as usize];
@@ -206,7 +197,7 @@ impl<'a> Mesh<'a> {
         }
         Some(Intersection {
             t,
-            payload: IntersectionPayload::MeshIntersectionPayload {
+            payload: IntersectionPayload::Mesh {
                 mesh: self,
                 face,
                 u,
@@ -216,7 +207,7 @@ impl<'a> Mesh<'a> {
     }
 }
 
-impl<'a> Geometry for Mesh<'a> {
+impl<'a> Geometry for Mesh {
     fn intersects_ray(&self, ray: &Ray) -> Option<Intersection> {
         if !self.bounding_box.intersects_ray(ray) {
             return None;

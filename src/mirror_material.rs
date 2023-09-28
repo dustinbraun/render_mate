@@ -27,7 +27,7 @@ impl Material for MirrorMaterial {
                 1.0,
             );
         }
-        if let IntersectionPayload::MeshIntersectionPayload { mesh, face, u, v } = intersection.payload {
+        if let IntersectionPayload::Mesh { mesh, face, u, v } = intersection.payload {
             let w = 1.0 - u - v;
             let v0 = mesh.vertices()[face.vertex_ids[0] as usize];
             let v1 = mesh.vertices()[face.vertex_ids[1] as usize];
@@ -50,7 +50,7 @@ impl Material for MirrorMaterial {
             return incoming*cos_theta
         }
 
-        if let IntersectionPayload::SphereIntersectionPayload { sphere } = intersection.payload {
+        if let IntersectionPayload::Sphere { sphere } = intersection.payload {
             let p = ray.origin + ray.direction*intersection.t;
             let mut n = (p - sphere.position).normalize();
             if n.dot(ray.direction) > 0.0 {

@@ -40,7 +40,7 @@ impl<'a> Scene<'a> {
         let mut best: Option<Intersection> = None;
         let mut best_mesh: Option<Node> = None;
         for node in self.nodes.iter() {
-            if let Some(intersection) = node.geometry.intersects_ray(ray) {
+            if let Some(intersection) = node.geometry().intersects_ray(ray) {
                 if let Some(best_intersection) = best {
                     if intersection.t < best_intersection.t {
                         best = Some(intersection);
@@ -55,7 +55,7 @@ impl<'a> Scene<'a> {
         }
         if let Some(best_intersection) = best {
             if let Some(best_mesh) = best_mesh {
-                best_mesh.material.trace(self, ray, &best_intersection, depth)
+                best_mesh.material().trace(self, ray, &best_intersection, depth)
             }
             else {
                 Color::new(

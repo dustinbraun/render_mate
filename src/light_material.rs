@@ -5,8 +5,8 @@ use crate::Ray;
 use crate::Intersection;
 
 pub struct LightMaterial {
-    pub color: Color,
-    pub intensity: f32,
+    color: Color,
+    intensity: f32,
 }
 
 impl LightMaterial {

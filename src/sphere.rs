@@ -37,7 +37,7 @@ impl Geometry for Sphere {
         }
         Some(Intersection {
             t,
-            payload: IntersectionPayload::SphereIntersectionPayload {
+            payload: IntersectionPayload::Sphere {
                 sphere: self,
             },
         })
